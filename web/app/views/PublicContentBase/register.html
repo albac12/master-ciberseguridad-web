@@ -1,26 +1,64 @@
-#{extends 'main.html' /}
-#{set title:'Register' /}
+#{extends 'main.html' /} #{set title:'Register' /} #{set 'moreScripts'}
+<script>
+    $(document).ready(function () {
 
-#{set 'moreScripts'}
-    <script>
-    $(document).ready(function(){
-
-        $('#register-submit').click(function(){
+        $('#register-submit').click(function () {
             result = validateForm();
 
-            if (result == true){
+            if (result == true) {
                 $('#form').submit();
             }
         });
 
         function validateForm() {
+            //variables para almacenar si cumple los tres requisitos la contraseña
+            var ContMay = 0;
+            var ContMin = 0;
+            var ContNum = 0;
+
+
+
             var username = document.forms["reg-form"]["username"].value;
+           
             if (username == "") {
                 alert("Name must be filled out");
                 return false;
             }
-
+            //el tipo de password válido no tiene ninguna clase de restriccion. Se puede añadir una validacion que fuera
+            //alfanumerica y una longitud minima.
             var password = document.forms["reg-form"]["password"].value;
+            var Max = password.length;
+
+            //comprobacion de longitud de password. Menor de 8 es invalido
+            if (password.length < 8) {
+                alert("La longitud de la contraseña tiene que ser mayor o igual a 8 caracteres ");
+                return false;
+            }
+            //si el password es mayor o igual de 8 caracteres se realiza una comprobacion de caracteres validos.
+            else {
+                //bucle para comprobar que tipo de caracteres componen la contraseña
+                for (var i = 0; i < Max; i++) {
+                    //comprobación de que existe alguna mayúscula
+                    if (password.charCodeAt(i) >= 65 && password.charCodeAt(i) <= 90) {
+                        ContMay = 1;
+                    }
+                    //comprobación de que existe alguna minúscula
+                    if (password.charCodeAt(i) >= 97 && password.charCodeAt(i) <= 122) {
+                        ContMin = 1;
+                    }
+                    //comprobacion de que existe algun número
+                    if (password.charCodeAt(i) >= 48 && password.charCodeAt(i) <= 57) {
+                        ContNum = 1;
+                    }
+
+                }
+                //comprobacion de que si no se cumplen las tres no es contraseña válida.
+                if (ContMay != 1 || ContMin != 1 || ContNum != 1) {
+                    alert("La contraseña ha de contener una Mayuscula , una Minuscula y un Número al menos");
+                    return false;
+                }
+            }
+
             if (password == "") {
                 alert("Both passwords must be filled out");
                 return false;
@@ -40,10 +78,7 @@
             return true;
         }
     });
-    </script>
-#{/set}
-
-#{form @processRegister(), id:'form', name:'reg-form'}
+</script> #{/set} #{form @processRegister(), id:'form', name:'reg-form'}
 <h2 class="text-left">&{'Public.register.title'}</h2>
 
 #{ifErrors}
@@ -56,19 +91,22 @@
         <div class="form-group">
             <div class="input-icon">
                 <i class="fa fa-user"></i>
-                <input class="form-control" type="text" value="${flash.name}" placeholder="&{'Public.register.name'}" id="username" name="username" />
+                <input class="form-control" type="text" value="${flash.name}" placeholder="&{'Public.register.name'}" id="username" name="username"
+                />
             </div>
         </div>
         <div class="form-group">
             <div class="input-icon">
                 <i class="fa fa-lock"></i>
-                <input class="form-control" type="password" autocomplete="off" name="password" id="password" value="" placeholder="&{'Public.register.password'}" />
+                <input class="form-control" type="password" autocomplete="off" name="password" id="password" value="" placeholder="&{'Public.register.password'}"
+                />
             </div>
         </div>
         <div class="form-group">
             <div class="input-icon">
                 <i class="fa fa-lock"></i>
-                <input class="form-control" type="password" autocomplete="off" name="passwordCheck" id="passwordCheck" value="" placeholder="&{'Public.register.passwordCheck'}" />
+                <input class="form-control" type="password" autocomplete="off" name="passwordCheck" id="passwordCheck" value="" placeholder="&{'Public.register.passwordCheck'}"
+                />
             </div>
         </div>
 
@@ -87,4 +125,6 @@
         &{'Public.register.registerButton'}
     </button>
 </div>
-<br><br><br>
+<br>
+<br>
+<br>
